@@ -10,7 +10,6 @@ chrome.cookies.get(
   (cookie) => {
     if (cookie) {
       console.log(cookie.value);
-
       chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
         ReactDOM.render(
           <React.StrictMode>
