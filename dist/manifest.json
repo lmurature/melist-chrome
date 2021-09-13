@@ -4,13 +4,13 @@
   "manifest_version": 3,
   "description": "Extension para usar ME List dentro de Mercado Libre",
   "icons": {
-    "512": "logo512.png"
+    "512": "regalo.png"
   },
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_icon": "logo512.png",
+    "default_icon": "regalo.png",
     "default_popup": "popup.html"
   },
   "host_permissions": [

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 import ListCard from "./components/ListCard";
+import store from "store";
 import { Row, Col, Modal, Button, Alert } from "react-bootstrap";
 
 function App(props) {
@@ -26,14 +27,21 @@ function App(props) {
       .then((response) => {
         let at = response.data.access_token;
         setAccessToken(at);
-        axios
-          .get("https://melist-api.herokuapp.com/api/users/me", {
-            headers: {
-              Authorization: "Bearer " + at,
-            },
-          })
-          .then((response) => setUserData(response.data))
-          .catch((err) => setError(err));
+        
+        if (!store.get("user_first_name")) {
+          axios
+            .get("https://melist-api.herokuapp.com/api/users/me", {
+              headers: {
+                Authorization: "Bearer " + at,
+              },
+            })
+            .then((response) => {
+              setUserData(response.data);
+              store.set("user_first_name", response.data.first_name);
+            })
+            .catch((err) => setError(err));
+        }
+
         axios
           .get(`https://melist-api.herokuapp.com/api/lists/get/all_owned`, {
             headers: {
@@ -74,8 +82,9 @@ function App(props) {
 
   const isProduct = () => {
     return (
-      tabUrl.includes("https://www.mercadolibre.com.ar") ||
-      tabUrl.includes("https://mercadolibre.com.ar")
+      (tabUrl.includes("https://www.mercadolibre.com.ar") ||
+        tabUrl.includes("https://mercadolibre.com.ar")) &&
+      tabUrl.split("MLA", 2).length > 1
     );
   };
 
@@ -129,7 +138,8 @@ function App(props) {
   return (
     <div className="main">
       <div className="greetings">
-        Hola{userData && " " + userData.first_name + ""}
+        Bienvenido,
+        {store.get("user_first_name") && " " + store.get("user_first_name")}
       </div>
       {isMeliUrl() ? (
         <React.Fragment>
