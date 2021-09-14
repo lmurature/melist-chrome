@@ -4,25 +4,25 @@
   text-align: center;
   min-width: 500px;
   min-height: 175px;
-  background-color: #fafafa;
+  background-color: #fff479;
 }
 
 .greetings {
-  font-weight: 900;
+  font-weight: 600;
   font-size: 18px;
-  color: linear-gradient(90deg, rgba(100, 242, 187, 1) 0%, rgba(155, 194, 252, 1) 73%);
+  color: #000000;
 }
 
 .detected-item {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 300;
 }
 
 .item-title {
-  font-weight: 900;
+  font-weight: 600;
 }
 
 .not-meli-message {
   margin-top: 30px;
-  color: #bebebe
+  color: rgb(100, 100, 100)
 }

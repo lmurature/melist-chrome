@@ -3,7 +3,7 @@ import axios from "axios";
 import "./App.css";
 import ListCard from "./components/ListCard";
 import store from "store";
-import { Row, Col, Modal, Button, Alert } from "react-bootstrap";
+import { Row, Col, Modal, Button, Alert, Container } from "react-bootstrap";
 
 function App(props) {
   const { refreshToken, tabUrl } = props;
@@ -15,6 +15,7 @@ function App(props) {
   const [listToAddItem, setListToAddItem] = useState(null);
   const [successAddItem, setSuccessAddItem] = useState(false);
   const [errorAddItem, setErrorAddItem] = useState(false);
+  const [userSharedLists, setUserSharedLists] = useState(null);
 
   const [itemData, setItemData] = useState(null);
   const [userLists, setUserLists] = useState(null);
@@ -49,6 +50,18 @@ function App(props) {
             },
           })
           .then((response) => setUserLists(response.data))
+          .catch((err) => setError(err));
+
+        axios
+          .get(
+            `https://melist-api.herokuapp.com/api/lists/get/all_shared?share_type=write`,
+            {
+              headers: {
+                Authorization: "Bearer " + at,
+              },
+            }
+          )
+          .then((response) => setUserSharedLists(response.data))
           .catch((err) => setError(err));
       })
       .catch((err) => setError(err));
@@ -140,7 +153,7 @@ function App(props) {
   };
 
   return (
-    <div className="main">
+    <Container className="main">
       <div className="greetings">
         Bienvenido,
         {store.get("user_first_name") && " " + store.get("user_first_name")}
@@ -166,6 +179,25 @@ function App(props) {
           <Row>
             {userLists &&
               userLists.map((l, i) => {
+                return (
+                  <Col
+                    onClick={() => {
+                      setListToAddItem(l);
+                      setShow(true);
+                    }}
+                    key={l.id}
+                    lg={2}
+                    md={3}
+                    xl={2}
+                    xs={3}
+                    xxl={2}
+                  >
+                    <ListCard title={l.title} id={l.id} index={i} />
+                  </Col>
+                );
+              })}
+            {userSharedLists &&
+              userSharedLists.map((l, i) => {
                 return (
                   <Col
                     onClick={() => {
@@ -220,7 +252,7 @@ function App(props) {
           )}
         </div>
       )}
-    </div>
+    </Container>
   );
 }
 
