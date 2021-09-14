@@ -27,7 +27,7 @@ function App(props) {
       .then((response) => {
         let at = response.data.access_token;
         setAccessToken(at);
-        
+
         if (!store.get("user_first_name")) {
           axios
             .get("https://melist-api.herokuapp.com/api/users/me", {
@@ -103,6 +103,10 @@ function App(props) {
     return isItem() || isProduct();
   };
 
+  const isMeliSite = () => {
+    return tabUrl.includes("https://www.mercadolibre.com.ar");
+  };
+
   const handleClose = () => {
     setShow(false);
     setTimeout(() => {
@@ -151,8 +155,13 @@ function App(props) {
             {error && JSON.stringify(error.response.data.message)})
           </Alert>
           <div className="detected-item">
-            {itemData &&
-              "¿Querés agregar " + itemData.title + " a alguna de tus listas?"}
+            {itemData && (
+              <React.Fragment>
+                ¿Querés agregar{" "}
+                <span className="item-title">{itemData.title}</span> a alguna de
+                tus listas?
+              </React.Fragment>
+            )}
           </div>
           <Row>
             {userLists &&
@@ -195,8 +204,20 @@ function App(props) {
         </React.Fragment>
       ) : (
         <div className="not-meli-message">
-          Navegá por Mercado Libre para agregar productos a tus listas en ME
-          List.
+          {isMeliSite() ? (
+            <React.Fragment>
+              Mirá las publicaciones y podrás agregarlas a cualquiera de tus
+              listas de ME List.
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              Navegá por{" "}
+              <a href="https://www.mercadolibre.com.ar/" target="_blank">
+                Mercado Libre
+              </a>{" "}
+              para agregar productos a tus listas en ME List.
+            </React.Fragment>
+          )}
         </div>
       )}
     </div>
