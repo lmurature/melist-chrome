@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "./App.css";
-import ListCard from "./components/ListCard";
-import store from "store";
-import { Row, Col, Modal, Button, Alert, Container } from "react-bootstrap";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import './App.css';
+import ListCard from './components/ListCard';
+import store from 'store';
+import { Row, Col, Modal, Button, Alert, Container } from 'react-bootstrap';
 
 function App(props) {
   const { refreshToken, tabUrl } = props;
 
   const [userData, setUserData] = useState(null);
-  const [show, setShow] = useState(false);
-  const [accessToken, setAccessToken] = useState("");
+  const [accessToken, setAccessToken] = useState('');
   const [error, setError] = useState(null);
   const [listToAddItem, setListToAddItem] = useState(null);
   const [successAddItem, setSuccessAddItem] = useState(false);
   const [errorAddItem, setErrorAddItem] = useState(false);
+  const [errorUndoItem, setErrorUndoItem] = useState(false);
   const [userSharedLists, setUserSharedLists] = useState(null);
 
   const [itemData, setItemData] = useState(null);
@@ -22,23 +22,23 @@ function App(props) {
 
   useEffect(() => {
     axios
-      .post("https://melist-api.herokuapp.com/api/users/auth/refresh_token", {
+      .post('https://melist-api.herokuapp.com/api/users/auth/refresh_token', {
         refresh_token: refreshToken,
       })
       .then((response) => {
         let at = response.data.access_token;
         setAccessToken(at);
 
-        if (!store.get("user_first_name")) {
+        if (!store.get('user_first_name')) {
           axios
-            .get("https://melist-api.herokuapp.com/api/users/me", {
+            .get('https://melist-api.herokuapp.com/api/users/me', {
               headers: {
-                Authorization: "Bearer " + at,
+                Authorization: 'Bearer ' + at,
               },
             })
             .then((response) => {
               setUserData(response.data);
-              store.set("user_first_name", response.data.first_name);
+              store.set('user_first_name', response.data.first_name);
             })
             .catch((err) => setError(err));
         }
@@ -46,7 +46,7 @@ function App(props) {
         axios
           .get(`https://melist-api.herokuapp.com/api/lists/get/all_owned`, {
             headers: {
-              Authorization: "Bearer " + at,
+              Authorization: 'Bearer ' + at,
             },
           })
           .then((response) => setUserLists(response.data))
@@ -57,7 +57,7 @@ function App(props) {
             `https://melist-api.herokuapp.com/api/lists/get/all_shared?share_type=write`,
             {
               headers: {
-                Authorization: "Bearer " + at,
+                Authorization: 'Bearer ' + at,
               },
             }
           )
@@ -90,26 +90,26 @@ function App(props) {
   }, refreshToken);
 
   const isItem = () => {
-    return tabUrl.includes("https://articulo.mercadolibre.com.ar");
+    return tabUrl.includes('https://articulo.mercadolibre.com.ar');
   };
 
   const isProduct = () => {
     return (
-      (tabUrl.includes("https://www.mercadolibre.com.ar") ||
-        tabUrl.includes("https://mercadolibre.com.ar")) &&
-      tabUrl.split("MLA", 2).length > 1
+      (tabUrl.includes('https://www.mercadolibre.com.ar') ||
+        tabUrl.includes('https://mercadolibre.com.ar')) &&
+      tabUrl.split('MLA', 2).length > 1
     );
   };
 
   const getItemId = () => {
-    let result = "MLA" + tabUrl.split("-", 2)[1];
+    let result = 'MLA' + tabUrl.split('-', 2)[1];
     return result;
   };
 
   const getProductId = () => {
-    let splitUrl = tabUrl.split("MLA", 2);
-    let splitProduct = splitUrl[1].split("?", 2);
-    return "MLA" + splitProduct[0];
+    let splitUrl = tabUrl.split('MLA', 2);
+    let splitProduct = splitUrl[1].split('?', 2);
+    return 'MLA' + splitProduct[0];
   };
 
   const isMeliUrl = () => {
@@ -117,27 +117,26 @@ function App(props) {
   };
 
   const isMeliSite = () => {
-    return tabUrl.includes("https://www.mercadolibre.com.ar");
+    return tabUrl.includes('https://www.mercadolibre.com.ar');
   };
 
   const handleClose = () => {
-    setShow(false);
     setTimeout(() => {
       setSuccessAddItem(false);
       setErrorAddItem(false);
     }, 10000);
   };
 
-  const handleAddItem = () => {
+  const handleAddItem = (id) => {
     setSuccessAddItem(false);
     setErrorAddItem(false);
     axios
       .post(
-        `https://melist-api.herokuapp.com/api/lists/${listToAddItem.id}/items/${itemData.id}`,
+        `https://melist-api.herokuapp.com/api/lists/${id}/items/${itemData.id}`,
         {},
         {
           headers: {
-            Authorization: "Bearer " + accessToken,
+            Authorization: 'Bearer ' + accessToken,
           },
         }
       )
@@ -152,25 +151,54 @@ function App(props) {
       });
   };
 
+  const handleUndoAddItem = () => {
+    axios
+      .delete(
+        `https://melist-api.herokuapp.com/api/lists/${listToAddItem.id}/items/${itemData.id}`,
+        {
+          headers: {
+            Authorization: 'Bearer ' + accessToken,
+          },
+        }
+      )
+      .then((response) => {
+        setSuccessAddItem(false);
+        setErrorAddItem(false);
+      })
+      .catch((err) => {
+        console.log(JSON.stringify(err));
+        setErrorUndoItem(true);
+        setErrorUndoItem(err);
+      });
+  };
+
   return (
     <Container className="main">
+      <div className="app-title">Extensión Melist 🎁</div>
       <div className="greetings">
-        Bienvenido,
-        {store.get("user_first_name") && " " + store.get("user_first_name")}
+        Hola,
+        {store.get('user_first_name') && ' ' + store.get('user_first_name')}
       </div>
       {isMeliUrl() ? (
         <React.Fragment>
           <Alert show={successAddItem} variant="success">
-            ¡Producto agregado con éxito!
+            ¡Producto agregado con éxito!{' '}
+            <span className="undo-button" onClick={handleUndoAddItem}>
+              Deshacer
+            </span>
           </Alert>
           <Alert show={errorAddItem} variant="danger">
-            Ocurrió un error al agregar este producto a tu lista. (Error:{" "}
+            Ocurrió un error al agregar este producto a tu lista. (Error:{' '}
             {error && JSON.stringify(error.response.data.message)})
+          </Alert>
+          <Alert show={errorUndoItem} variant="danger">
+            Ocurrió un error al intentar deshacer la operacion. (Error:{' '}
+            {errorUndoItem && JSON.stringify(error.response.data.message)})
           </Alert>
           <div className="detected-item">
             {itemData && (
               <React.Fragment>
-                ¿Querés agregar{" "}
+                ¿Querés agregar{' '}
                 <span className="item-title">{itemData.title}</span> a alguna de
                 tus listas?
               </React.Fragment>
@@ -183,7 +211,7 @@ function App(props) {
                   <Col
                     onClick={() => {
                       setListToAddItem(l);
-                      setShow(true);
+                      handleAddItem(l.id);
                     }}
                     key={l.id}
                     lg={2}
@@ -202,7 +230,7 @@ function App(props) {
                   <Col
                     onClick={() => {
                       setListToAddItem(l);
-                      setShow(true);
+                      handleAddItem(l.id);
                     }}
                     key={l.id}
                     lg={2}
@@ -216,38 +244,21 @@ function App(props) {
                 );
               })}
           </Row>
-          <Modal size="sm" show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-              <Modal.Title>Agregar producto a la lista</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              ¿Querés agregar este producto a la lista{" "}
-              {listToAddItem && listToAddItem.title} ?
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={handleClose}>
-                Cancelar
-              </Button>
-              <Button variant="primary" onClick={handleAddItem}>
-                Agregar
-              </Button>
-            </Modal.Footer>
-          </Modal>
         </React.Fragment>
       ) : (
         <div className="not-meli-message">
           {isMeliSite() ? (
             <React.Fragment>
               Mirá las publicaciones y podrás agregarlas a cualquiera de tus
-              listas de ME List.
+              listas en Melist.
             </React.Fragment>
           ) : (
             <React.Fragment>
-              Navegá por{" "}
+              Navegá por{' '}
               <a href="https://www.mercadolibre.com.ar/" target="_blank">
                 Mercado Libre
-              </a>{" "}
-              para agregar productos a tus listas en ME List.
+              </a>{' '}
+              para agregar productos a tus listas en Melist.
             </React.Fragment>
           )}
         </div>

@@ -14,35 +14,11 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+
+  --tw-bg-opacity: 1;
+  background-color: rgba(129, 140, 248, var(--tw-bg-opacity));
 }
 
-.list-card-purple {
-  background: linear-gradient(90deg, rgba(138, 84, 255, 0.55) 0%, rgba(155, 190, 252, 1) 89%);
-}
-
-.list-card-red {
-  background: linear-gradient(90deg, rgba(185, 242, 100, 0.55) 0%, rgba(255, 82, 82, 1) 89%);
-}
-
-.list-card-green {
-  background: linear-gradient(90deg, rgba(182, 100, 242, 0.55) 0%, rgba(54, 210, 87, 1) 89%);
-}
-
-.list-card-brown {
-  background: linear-gradient(90deg, rgba(175, 222, 80, 0.55) 0%, rgba(166, 119, 73, 1) 89%);
-}
-
-.list-card-blue {
-  background: linear-gradient(90deg, rgba(222, 97, 80, 0.55) 0%, rgba(57, 91, 185, 1) 89%);
-}
-
-.list-card-pink {
-  background: linear-gradient(90deg, rgba(80, 222, 193, 0.55) 0%, rgba(201, 89, 177, 1) 89%);
-}
-
-.list-card-orange {
-  background: linear-gradient(90deg, rgba(148, 80, 222, 0.55) 0%, rgba(250, 154, 22, 1) 89%);
-}
 
 .list-title {
   font-size: 12px;

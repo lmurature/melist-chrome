@@ -1,12 +1,12 @@
 /*global chrome*/
-import React from "react";
-import ReactDOM from "react-dom";
-import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
 
 chrome.cookies.get(
-  { url: "https://melist-app.herokuapp.com/summary", name: "refresh-token" },
+  { url: 'https://melist-app.herokuapp.com/summary', name: 'refresh-token' },
   (cookie) => {
     if (cookie) {
       console.log(cookie.value);
@@ -15,15 +15,21 @@ chrome.cookies.get(
           <React.StrictMode>
             <App refreshToken={cookie.value} tabUrl={tabs[0].url} />
           </React.StrictMode>,
-          document.getElementById("root")
+          document.getElementById('root')
         );
       });
     } else {
       ReactDOM.render(
         <React.StrictMode>
-          <div>Inicia sesión en ME List para utilizar la extensión</div>
+          <div className="not-logged">
+            Inicia sesión en{' '}
+            <a href="https://melist-app.herokuapp.com/" target="_blank">
+              Melist
+            </a>{' '}
+            para comenzar a utilizar la extensión.
+          </div>
         </React.StrictMode>,
-        document.getElementById("root")
+        document.getElementById('root')
       );
     }
   }

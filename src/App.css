@@ -4,7 +4,7 @@
   text-align: center;
   min-width: 500px;
   min-height: 175px;
-  background-color: #fff479;
+  background-color: #fafafa;
 }
 
 .greetings {
@@ -25,4 +25,20 @@
 .not-meli-message {
   margin-top: 30px;
   color: rgb(100, 100, 100)
+}
+
+.undo-button {
+  color: rgb(79, 79, 255);
+}
+
+.undo-button:hover {
+  color: rgb(104, 104, 255);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.app-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000000;
 }
